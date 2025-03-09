@@ -79,27 +79,47 @@
 
         .toggle-mode {
             margin-top: 20px;
-            padding: 10px 15px;
+            padding: 10px;
             border: none;
-            border-radius: 5px;
+            border-radius: 50%;
             cursor: pointer;
-            background-color: #1DA1F2;
-            color: white;
-            font-size: 16px;
+            background-color: transparent;
+            font-size: 24px;
+        }
+
+        .toggle-mode svg {
+            width: 30px;
+            height: 30px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        body:not(.light-mode) .toggle-mode svg {
+            stroke: white;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Muro de Noticias Globales</h1>
-        <button class="toggle-mode" onclick="toggleMode()">Modo Claro</button>
+        <button class="toggle-mode" onclick="toggleMode()">
+            <svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"></path></svg>
+        </button>
         <div id="newsWall" class="news-container"></div>
     </div>
     <script>
         function toggleMode() {
             document.body.classList.toggle('light-mode');
-            const button = document.querySelector('.toggle-mode');
-            button.textContent = document.body.classList.contains('light-mode') ? 'Modo Oscuro' : 'Modo Claro';
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (document.body.classList.contains('light-mode')) {
+                themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+            } else {
+                themeIcon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"></path>';
+            }
         }
 
         async function fetchNews() {
