@@ -62,6 +62,14 @@
             color: var(--text-color);
         }
 
+        .news-item a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #1DA1F2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
         .news-item .category {
             font-size: 12px;
             color: #888;
@@ -75,5 +83,50 @@
         <div id="newsWall" class="news-container">Cargando noticias...</div>
     </div>
     <script>
-        const mediastackApiKey = 'a0d1d9a70c4d6e716900d74464d23899'; // Clave de API de Mediastack
-        const openAiApiKey = 'sk-proj-PqCC6Q9t64db1rfOagSMVu4j1JP2VaEBv0wm7
+        const apiKey = 'a0d1d9a70c4d6e716900d74464d23899'; // Tu clave de API de Mediastack
+        const apiUrl = `https://api.mediastack.com/v1/news?access_key=${apiKey}&languages=es&limit=10`;
+
+        async function fetchNews() {
+            const newsWall = document.getElementById('newsWall');
+            newsWall.innerHTML = 'Cargando noticias...';
+            console.log("⏳ Solicitando noticias de:", apiUrl);
+
+            try {
+                const response = await fetch(apiUrl);
+                console.log("📡 Respuesta de la API recibida:", response);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log("📋 Datos recibidos de Mediastack:", data);
+
+                if (data.data && data.data.length > 0) {
+                    newsWall.innerHTML = '';
+                    
+                    data.data.forEach(article => {
+                        const newsItem = document.createElement('div');
+                        newsItem.classList.add('news-item');
+                        newsItem.innerHTML = `
+                            <h2>${article.title}</h2>
+                            <p>${article.description || 'No hay descripción disponible'}</p>
+                            <a href="${article.url}" target="_blank">Leer más</a>
+                            <p class="category">Categoría: ${article.category || 'Desconocida'}</p>
+                        `;
+                        newsWall.appendChild(newsItem);
+                    });
+                } else {
+                    console.warn("⚠️ No se encontraron noticias en la API.");
+                    newsWall.innerHTML = '<p>No se encontraron noticias.</p>';
+                }
+            } catch (error) {
+                console.error('❌ Error al obtener noticias:', error);
+                newsWall.innerHTML = `<p style="color: red;">⚠️ Error al cargar las noticias: ${error.message}</p>`;
+            }
+        }
+
+        fetchNews();
+    </script>
+</body>
+</html>
