@@ -91,7 +91,9 @@
     </div>
     <script>
         const apiKey = 'a0d1d9a70c4d6e716900d74464d23899'; // Tu clave de API de Mediastack
-        const apiUrl = `http://api.mediastack.com/v1/news?access_key=${apiKey}&languages=es&limit=10`;
+        const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+        const apiUrl = `${proxyUrl}http://api.mediastack.com/v1/news?access_key=${apiKey}&languages=es&limit=10`;
+
         
         async function fetchNews() {
             const newsWall = document.getElementById('newsWall');
