@@ -62,14 +62,6 @@
             color: var(--text-color);
         }
 
-        .news-item a {
-            display: inline-block;
-            margin-top: 10px;
-            color: #1DA1F2;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
         .news-item .category {
             font-size: 12px;
             color: #888;
@@ -83,46 +75,82 @@
         <div id="newsWall" class="news-container">Cargando noticias...</div>
     </div>
     <script>
-        const apiKey = 'a0d1d9a70c4d6e716900d74464d23899'; // Tu clave de API de Mediastack
-        const apiUrl = `https://api.mediastack.com/v1/news?access_key=${apiKey}&languages=es&limit=10`;
+        const mediastackApiKey = 'a0d1d9a70c4d6e716900d74464d23899'; // Clave de API de Mediastack
+        const openAiApiKey = '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'; // Clave de API de OpenAI
+        const apiUrl = `https://api.mediastack.com/v1/news?access_key=${mediastackApiKey}&languages=es&limit=5`;
 
         async function fetchNews() {
             const newsWall = document.getElementById('newsWall');
             newsWall.innerHTML = 'Cargando noticias...';
-            console.log("⏳ Solicitando noticias de:", apiUrl);
+            console.log("⏳ Solicitando noticias de Mediastack...");
 
             try {
                 const response = await fetch(apiUrl);
-                console.log("📡 Respuesta de la API recibida:", response);
+                console.log("📡 Respuesta de Mediastack:", response);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const data = await response.json();
-                console.log("📋 Datos recibidos de Mediastack:", data);
+                console.log("📋 Noticias obtenidas:", data);
 
                 if (data.data && data.data.length > 0) {
                     newsWall.innerHTML = '';
-                    
-                    data.data.forEach(article => {
+
+                    for (const article of data.data) {
+                        let summary = await getSummary(article.description || article.title);
+                        
                         const newsItem = document.createElement('div');
                         newsItem.classList.add('news-item');
                         newsItem.innerHTML = `
                             <h2>${article.title}</h2>
-                            <p>${article.description || 'No hay descripción disponible'}</p>
-                            <a href="${article.url}" target="_blank">Leer más</a>
+                            <p>${summary}</p>
                             <p class="category">Categoría: ${article.category || 'Desconocida'}</p>
                         `;
                         newsWall.appendChild(newsItem);
-                    });
+                    }
                 } else {
-                    console.warn("⚠️ No se encontraron noticias en la API.");
+                    console.warn("⚠️ No se encontraron noticias.");
                     newsWall.innerHTML = '<p>No se encontraron noticias.</p>';
                 }
             } catch (error) {
                 console.error('❌ Error al obtener noticias:', error);
                 newsWall.innerHTML = `<p style="color: red;">⚠️ Error al cargar las noticias: ${error.message}</p>`;
+            }
+        }
+
+        async function getSummary(text) {
+            console.log("📝 Resumiendo con OpenAI:", text);
+
+            const openAiUrl = "https://api.openai.com/v1/chat/completions";
+            try {
+                const response = await fetch(openAiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${openAiApiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4",
+                        messages: [{ role: "user", content: `Resume esta noticia en 2 frases: ${text}` }],
+                        max_tokens: 100
+                    })
+                });
+
+                console.log("📡 Respuesta de OpenAI:", response);
+
+                if (!response.ok) {
+                    throw new Error(`OpenAI error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("📋 Resumen generado:", data);
+
+                return data.choices?.[0]?.message?.content || "No se pudo generar el resumen.";
+            } catch (error) {
+                console.error('❌ Error al resumir con OpenAI:', error);
+                return "Error al generar resumen.";
             }
         }
 
