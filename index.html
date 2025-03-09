@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muro de Noticias Globales</title>
+    <style>
+        :root {
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --container-bg: #1e1e1e;
+            --news-bg: #2a2a2a;
+            --shadow-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode {
+            --background-color: #f4f4f4;
+            --text-color: #000000;
+            --container-bg: #ffffff;
+            --news-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px var(--shadow-color);
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .news-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .news-item {
+            background: var(--news-bg);
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            text-align: left;
+        }
+
+        .news-item h2 {
+            font-size: 18px;
+            margin: 0 0 10px;
+        }
+
+        .news-item p {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .news-item a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #1DA1F2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .news-item .category {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .toggle-mode {
+            margin-top: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: transparent;
+            font-size: 24px;
+        }
+
+        .toggle-mode svg {
+            width: 30px;
+            height: 30px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        body:not(.light-mode) .toggle-mode svg {
+            stroke: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Muro de Noticias Globales</h1>
+        <div id="newsWall" class="news-container">Cargando noticias...</div>
+        <button class="toggle-mode" onclick="toggleMode()">
+            <svg id="themeIcon" viewBox="0 0 24 24">
+                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"></path>
+            </svg>
+        </button>
+    </div>
+    <script>
+        const apiKey = '59d402c306d00d64d2ebd3d3a75414f2'; // Tu clave de API de GNews
+        const categories = ['general', 'world', 'nation', 'business', 'technology', 'entertainment', 'sports', 'science', 'health'];
+        const newsWall = document.getElementById('newsWall');
+
+        function toggleMode() {
+            document.body.classList.toggle('light-mode');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (document.body.classList.contains('light-mode')) {
+                themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+            } else {
+                themeIcon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"></path>';
+            }
+        }
+
+        async function fetchNews() {
+            newsWall.innerHTML = 'Cargando noticias...';
+            let allArticles = [];
+
+            for (const category of categories) {
+                const apiUrl = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=es&apikey=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+
+                    if (data.articles && data.articles.length > 0) {
+                        const articlesWithCategory = data.articles.map(article => ({
+                            ...article,
+                            category: category
+                        }));
+                        allArticles = [...allArticles, ...articlesWithCategory];
+                    }
+                } catch (error) {
+                    console.error(`Error al obtener noticias de la categoría ${category}:`, error);
+                }
+            }
+
+            if (allArticles.length > 0) {
+                newsWall.innerHTML = '';
+                allArticles.forEach(article => {
+                    const newsItem = document.createElement('div');
+                    newsItem.classList.add('news-item');
+                    newsItem.innerHTML = `
+                        <h2>${article.title}</h2>
+                        <p>${article.description || 'No hay descripción disponible
+::contentReference[oaicite:3]{index=3}
+ 
