@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/x-icon" href="https://jelgezabal.github.io/App-noticias/favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muro de Noticias Globales</title>
+    <style>
+        :root {
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --container-bg: #1e1e1e;
+            --news-bg: #2a2a2a;
+            --shadow-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px var(--shadow-color);
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .news-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .news-item {
+            background: var(--news-bg);
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            text-align: left;
+        }
+
+        .news-item h2 {
+            font-size: 18px;
+            margin: 0 0 10px;
+        }
+
+        .news-item p {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .news-item .category {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Muro de Noticias Globales</h1>
+        <div id="newsWall" class="news-container">Cargando noticias...</div>
+    </div>
+    <script>
+        const mediastackApiKey = 'a0d1d9a70c4d6e716900d74464d23899'; // Clave de API de Mediastack
+        const openAiApiKey = 'sk-proj-PqCC6Q9t64db1rfOagSMVu4j1JP2VaEBv0wm7
